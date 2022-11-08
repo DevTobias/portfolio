@@ -1,0 +1,54 @@
+---
+import { Icon } from 'astro-icon';
+
+export interface Props {
+  label?: string;
+}
+
+const { label = 'Toggle between Dark and Light mode' } = Astro.props;
+---
+
+<button
+  type="button"
+  class="transition-transform hover:scale-110"
+  aria-label={label}
+  data-toggle-theme
+>
+  <Icon name={'tabler:sun'} class="sun w-8 h-8" />
+  <Icon name={'tabler:moon'} class="moon w-8 h-8" />
+</button>
+
+<style is:global>
+  body > * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
+  [data-toggle-theme] > .moon,
+  .dark [data-toggle-theme] > .sun {
+    display: none;
+  }
+
+  [data-toggle-theme] > .sun {
+    display: block;
+    animation: half-spin 250ms cubic-bezier(0.17, 0.95, 0.53, 1.24);
+  }
+
+  .dark [data-toggle-theme] > .moon {
+    display: block;
+    animation: spin 250ms cubic-bezier(0.17, 0.95, 0.53, 1.24);
+  }
+
+  @keyframes half-spin {
+    100% {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>

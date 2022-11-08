@@ -1,0 +1,11 @@
+<style is:global>
+  body.preload * {
+    animation-duration: 0s !important;
+    transition-property: none !important;
+  }
+</style>
+
+<script>
+  document.body.classList.toggle('preload');
+  setTimeout(() => document.body.classList.toggle('preload'), 500);
+</script>

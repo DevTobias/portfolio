@@ -1,0 +1,30 @@
+---
+import GlobalScripts from '~/assets/scripts/GlobalScripts.astro';
+import '~/assets/styles/globals.scss';
+import Preloader from '~/components/common/Preloader.astro';
+import ThemeToggle from '~/components/common/ThemeToggle.astro';
+
+import Meta, { Props as MetaProps } from '~/components/core/Meta.astro';
+import { SITE } from '~/config';
+
+export interface Props {
+  meta?: MetaProps;
+}
+
+const { meta } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={SITE.language}>
+  <head>
+    <Meta {...meta} />
+  </head>
+  <body class="font-roboto text-slate-800 dark:text-slate-50">
+    <div class="absolute top-10 right-10">
+      <ThemeToggle />
+    </div>
+    <slot />
+    <Preloader />
+    <GlobalScripts />
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "@devtobias/portfolio",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "modules/*",
+    "frontend"
+  ],
+  "scripts": {
+    "frontend": "yarn workspace @devtobias/frontend"
+  }
+}

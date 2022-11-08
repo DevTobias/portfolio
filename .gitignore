@@ -1,0 +1,16 @@
+# build output
+**/dist
+**/*.db
+**/uploads
+**/database
+
+# dependencies
+**/node_modules/
+
+# environment variables
+**/.env
+**/.env.production
+**/inventory.yml
+
+# operating system
+**/.DS_Store
