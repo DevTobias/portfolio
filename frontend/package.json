@@ -16,6 +16,7 @@
     "@astrojs/tailwind": "^2.1.2",
     "@devtobias/eslint-config": "^1.0.0",
     "@devtobias/prettier-config": "^1.0.0",
+    "@fontsource/dancing-script": "^4.5.10",
     "@fontsource/roboto": "^4.5.8",
     "astro": "^1.0.0",
     "astro-compress": "^1.1.1",

@@ -3,7 +3,218 @@ import Layout from '~/layouts/BaseLayout.astro';
 ---
 
 <Layout>
-  <main class="flex items-center justify-center w-full h-screen bg-slate-50 dark:bg-slate-800">
-    <h1 class="font-bold text-7xl">DevTobias</h1>
+  <main class="w-full h-screen bg-slate-50 dark:bg-slate-800 transition-colors">
+    <div id="background" class="h-full max-h-[640px] w-full relative">
+      <h1 id="title" class="centered">
+        Hi, I'm Tobias, fullstack
+        <span class="fancy">developer</span>.
+      </h1>
+      <div id="tiles" class="h-full max-h-[639px] w-full relative grid"></div>
+    </div>
   </main>
 </Layout>
+
+<style is:global>
+  :root {
+    --g1: rgb(98, 0, 234);
+    --g2: rgb(236, 64, 122);
+  }
+
+  #background {
+    animation: background-pan 10s linear infinite;
+    background: linear-gradient(to right, var(--g1), var(--g2), var(--g1));
+    background-size: 200%;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0px;
+  }
+
+  #title {
+    font-size: 5vw;
+    margin: 0px;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+    transition-delay: 100ms;
+    width: 50vw;
+    z-index: 3;
+    font-weight: bold;
+  }
+
+  .toggled > #title {
+    opacity: 0;
+  }
+
+  #title > .fancy {
+    color: var(--g2);
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5em;
+    line-height: 0.9em;
+  }
+
+  .centered {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #tiles {
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+  }
+
+  @keyframes background-pan {
+    from {
+      background-position: 0% center;
+    }
+
+    to {
+      background-position: -200% center;
+    }
+  }
+
+  .tile {
+    cursor: pointer;
+    position: relative;
+    transition: opacity 200ms ease-out;
+  }
+
+  .tile:before {
+    background-color: rgb(255, 255, 255);
+    content: '';
+    inset: 0.5px;
+    position: absolute;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark .tile::before {
+    background-color: rgb(30, 41, 59);
+  }
+
+  .tile:hover:before {
+    background-color: rgb(240, 240, 240);
+  }
+
+  .dark .tile:hover:before {
+    background-color: rgb(28, 37, 52);
+  }
+
+  .hidden-tile {
+    opacity: 0;
+  }
+
+  .splash::after {
+    background-color: rgba(125, 36, 66, 0.08);
+    content: '';
+    inset: 0.5px;
+    position: absolute;
+    animation: fade-out 100ms ease-in-out forwards;
+    animation-delay: 100ms;
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  const background = document.getElementById('background')!;
+  const wrapper = document.getElementById('tiles')!;
+
+  let columns = 0;
+  let rows = 0;
+  let toggled = false;
+
+  const isAlreadyActive = (index: number) => {
+    const tile = document.getElementById(`tile-${index}`);
+
+    if (tile === null) {
+      return true;
+    }
+
+    return (
+      (toggled && tile.classList.contains('hidden-tile')) ||
+      (!toggled && !tile.classList.contains('hidden-tile'))
+    );
+  };
+
+  const floodFill = (index: number) => {
+    const rowPos = Math.floor(index / columns);
+    const colPos = index - rowPos * columns;
+
+    const left = index - 1;
+    const right = index + 1;
+    const top = index - columns;
+    const bottom = index + columns;
+
+    const tile = document.getElementById(`tile-${index}`)!;
+
+    tile.classList.toggle('hidden-tile');
+    tile.classList.remove('splash');
+
+    setTimeout(() => {
+      tile.classList.add('splash');
+    }, 200);
+
+    setTimeout(() => {
+      if (!isAlreadyActive(top)) {
+        floodFill(top);
+      }
+      if (!isAlreadyActive(bottom)) {
+        floodFill(bottom);
+      }
+    }, 25);
+
+    setTimeout(() => {
+      if (colPos > 0 && !isAlreadyActive(left)) {
+        floodFill(left);
+      }
+      if (colPos < columns - 1 && !isAlreadyActive(right)) {
+        floodFill(right);
+      }
+    }, 40);
+  };
+
+  const handleOnClick = (index: number) => {
+    toggled = !toggled;
+    background.classList.toggle('toggled');
+    floodFill(index);
+  };
+
+  const createTile = (index: number) => {
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+    tile.id = `tile-${index}`;
+    tile.onclick = () => handleOnClick(index);
+    return tile;
+  };
+
+  const createTiles = (quantity: number) => {
+    Array.from(Array(quantity)).map((_, i) => {
+      wrapper.appendChild(createTile(i));
+    });
+  };
+
+  const createGrid = () => {
+    wrapper.innerHTML = '';
+
+    const size = wrapper.clientWidth > 800 ? 75 : 50;
+
+    columns = Math.floor(wrapper.clientWidth / size);
+    rows = Math.floor(wrapper.clientHeight / size);
+
+    wrapper.style.setProperty('--columns', columns.toString());
+    wrapper.style.setProperty('--rows', rows.toString());
+
+    createTiles(columns * rows);
+  };
+
+  createGrid();
+
+  window.onresize = () => createGrid();
+</script>

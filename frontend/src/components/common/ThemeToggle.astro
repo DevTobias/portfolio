@@ -19,12 +19,6 @@ const { label = 'Toggle between Dark and Light mode' } = Astro.props;
 </button>
 
 <style is:global>
-  body > * {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
-  }
-
   [data-toggle-theme] > .moon,
   .dark [data-toggle-theme] > .sun {
     display: none;
